@@ -20,10 +20,10 @@ const productsSearch = async (params: ProductsSearchParams): Promise<ProductsSea
   const productResponse = await getProduct(apiSearchParams);
   const enhancedProductResponse = enhanceProduct(productResponse);
   const products = (enhancedProductResponse.data as any)._variants;
-  const availableFilters: Record<string, Filter> = getFiltersFromProductsAttributes(products);
+  const availableFilters: Record<string, Filter> = getFiltersFromProductsAttributes(productResponse);
   return {
     data: products,
-    total: productResponse.data.products.total,
+    total: (productResponse as any).total,
     availableFilters,
     availableSortingOptions
   };
