@@ -3,7 +3,7 @@
 // import { getCategory } from "../getCategory";
 
 /* eslint-disable quotes */
-const TOKEN = "Bearer 7Vu86kYRWOuoEFTdlDK0w3EvS0NjQSQX";
+const TOKEN = "Bearer J3wNzSmQtOD0ON_Rs3uaCz5oqE_MlzjH";
 const withToken = (fn) => (arg) => fn(arg, TOKEN);
 const setCategory = (category) =>
   category

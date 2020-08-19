@@ -2,7 +2,7 @@ import ApolloClient from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { SetupConfig, Auth, ApiConfig, Token } from './types/setup';
 import createCommerceToolsLink from './helpers/createCommerceToolsLink';
-import getProduct from './api/getProduct';
+import getProduct, {getProductlist} from './api/getProduct';
 import getCategory from './api/getCategory';
 import createCart from './api/createCart';
 import updateCart from './api/updateCart';
@@ -88,6 +88,7 @@ export {
   currencies,
   cartActions,
   getProduct,
+  getProductlist,
   getCategory,
   createCart,
   updateCart,
