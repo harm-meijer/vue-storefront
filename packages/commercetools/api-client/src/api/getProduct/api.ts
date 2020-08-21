@@ -3,17 +3,17 @@
 // import { getCategory } from "../getCategory";
 
 /* eslint-disable quotes */
+import { currency, country, locale } from './../../index';
+
 const TOKEN = "Bearer J3wNzSmQtOD0ON_Rs3uaCz5oqE_MlzjH";
 const withToken = (fn) => (arg) => fn(arg, TOKEN);
-const setCategory = (category) =>
-  category
-    ? [
-      [
-        "filter.query",
-        `categories.id:subtree("${category}")`
-      ]
-    ]
-    : [];
+const setCategory = ({ category, ...query }) => (category
+  ? {
+    ...query,
+    'filter.query': `categories.id:subtree("${category}")`
+  }
+  : query);
+
 const config = {
   facetSearches: [
     { name: "commonSize", type: "enum" },
@@ -69,34 +69,6 @@ export const makeConfig = (token) => ({
   },
   mode: "cors"
 });
-const locale = () => "en";
-const facets = (query = {}, locale) =>
-  config.facetSearches.reduce((result, { name, type }) => {
-    // eslint-disable-next-line no-prototype-builtins
-    if (query.hasOwnProperty(name)) {
-      result["filter.query"] = result["filter.query"] || [];
-      result["filter.query"].push(
-        `${asAttribute(name, type, locale)}:${
-          Array.isArray(query[name])
-            ? query[name]
-              .map((value) => `"${value}"`)
-              .join(",")
-            : `"${query[name]}"`
-        }`
-      );
-    }
-    return result;
-  }, {});
-const paging = (query) => {
-  const paging = [];
-  if (query.pageSize) {
-    paging.push(["limit", query.pageSize]);
-  }
-  if (query.page) {
-    paging.push(["offset", query.page - 1]);
-  }
-  return paging;
-};
 
 const product = {
   // const {
@@ -115,52 +87,70 @@ const product = {
       [query, locale, totalFacets = config.facetSearches],
       accessToken
     ) => {
+      query = setCategory(query);
       return Promise.all([
         groupFetchJson(
           toUrl(`${baseUrl}/product-projections/search`, [
-            ...paging(query),
-            ...setCategory(query.category),
             ...Object.entries(query)
               .filter(
-                ([, val]) =>
-                  !(val === null || val === undefined)
-              )
-              .filter(([k]) => k === "priceFilter")
-              .map(([, v]) => {
-                return ["filter.query", v];
-              }),
-            ...Object.entries(facets(query, locale)),
-            ...totalFacets.map(({ name, type }) => [
-              "facet",
-              `${asAttribute(
-                name,
-                type,
-                locale
-              )} counting products`
-            ])
+                ([, val]) => !(val === null || val === undefined)
+              ).map(
+                ([k, v]) => {
+                  if (k === 'priceFilter') {
+                    return ['filter.query', v];
+                  }
+                  return [k, v];
+                }
+              ),
+            ...totalFacets.map(
+              ({ name, type }) => [
+                'facet',
+                `${asAttribute(name, type, locale)} counting products`
+              ]
+            ),
+            ['priceCurrency', currency],
+            ['priceCountry', country]
+
           ]),
           makeConfig(accessToken)
         )
-      ]).then(([{ facets, ...result }]) => ({
-        ...result,
-        facets: config.facetSearches.map(
-          ({ name, type }) => {
-            const facet =
+      ]).then(([{ facets, results, ...result }]) => {
+        return ({
+          ...result,
+          results: results.map(
+            (product) => ({
+              ...product.masterVariant,
+              _name: product.name[locale],
+              _slug: product.slug[locale],
+              _id: product.id,
+              _master: true,
+              // no description in product?
+              _description: '',
+              _categoriesRef: product.categories.map(
+                ({ id }) => id
+              ),
+              images: product.masterVariant.images
+            })
+          ),
+          facets: config.facetSearches.map(
+            ({ name, type }) => {
+              const facet =
               facets[asAttribute(name, type, locale)];
-            return {
-              ...facet,
-              name,
-              label: "how to translate?",
-              type,
-              terms: [
-                ...((facet && facet.terms) || [])
-              ].sort((a, b) =>
-                a.term.localeCompare(b.term)
-              )
-            };
-          }
-        )
-      }));
+              return {
+                ...facet,
+                name,
+                label: "how to translate?",
+                type,
+                terms: [
+                  ...((facet && facet.terms) || [])
+                ].sort((a, b) =>
+                  a.term.localeCompare(b.term)
+                )
+              };
+            }
+          )
+        });
+      });
     }
   )
 };
@@ -189,7 +179,7 @@ export default (search) => {
         pageSize: search.perPage,
         page: search.page
       },
-      locale()
+      locale
     ])
     .then((r) => {
       return r;
