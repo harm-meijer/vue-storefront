@@ -4,9 +4,33 @@
 
 /* eslint-disable quotes */
 import { currency, country, locale } from './../../index';
+import createAccessToken from '../../helpers/createAccessToken';
 
-const TOKEN = "Bearer J3wNzSmQtOD0ON_Rs3uaCz5oqE_MlzjH";
-const withToken = (fn) => (arg) => fn(arg, TOKEN);
+const NONE = {};
+const withToken = (fn) => {
+  let token = Promise.resolve(NONE);
+  let retry = false;
+  const request = (arg) => {
+    return token.then(
+      token=>token === NONE ? createAccessToken() : token
+    ).then(
+      t=>{
+        token = Promise.resolve(t);
+        retry = false;
+        return fn(arg, `Bearer ${t.access_token}`);
+      }
+    ).catch(
+      ()=>{
+        if (!retry) {
+          retry = true;
+          token = Promise.resolve(NONE);
+          return request(arg);
+        }
+      }
+    );
+  };
+  return request;
+};
 const setCategory = ({ category, ...query }) => (category
   ? {
     ...query,
