@@ -3,7 +3,7 @@
 // import { getCategory } from "../getCategory";
 
 /* eslint-disable quotes */
-import { currency, country, locale } from './../../index';
+import { getSettings } from './../../index';
 import createAccessToken from '../../helpers/createAccessToken';
 
 const NONE = {};
@@ -112,6 +112,7 @@ const product = {
       accessToken
     ) => {
       query = setCategory(query);
+      const { currency, country } = getSettings();
       return Promise.all([
         groupFetchJson(
           toUrl(`${baseUrl}/product-projections/search`, [
@@ -180,6 +181,7 @@ const product = {
 };
 
 export default (search) => {
+  const { locale } = getSettings();
   const category = search.catId;
   const queryFacets = Object.entries(
     search.filters || ({} as any)
