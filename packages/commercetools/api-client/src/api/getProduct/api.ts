@@ -16,8 +16,12 @@ const withToken = (fn) => {
     ).then(
       t=>{
         token = Promise.resolve(t);
-        retry = false;
         return fn(arg, `Bearer ${t.access_token}`);
+      }
+    ).then(
+      resolve=>{
+        retry = false;
+        return resolve;
       }
     ).catch(
       ()=>{
