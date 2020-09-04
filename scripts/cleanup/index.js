@@ -26,7 +26,9 @@ glob('**/node_modules/', (er, files) => {
     console.error(er);
     exit(1);
   }
-  filter(files).forEach(
+  filter(
+    files.filter(f=>!f.includes('scripts/cleanup'))
+  ).forEach(
     dir=>
       fs.remove(dir, { recursive: true }, (err) => {
         if (err) {
