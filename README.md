@@ -32,7 +32,7 @@ Vue Storefront is the most popular and most advanced PWA Headless frontend for e
 ## Installation
 **Installing dependencies:**
 ```sh
-$ yarn install
+$ yarn install --frozen-lockfile
 ```
 
 **Verify by building packages:**
