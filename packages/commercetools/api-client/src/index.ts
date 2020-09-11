@@ -16,7 +16,7 @@ import updateShippingDetails from './api/updateShippingDetails';
 import customerSignMeUp from './api/customerSignMeUp';
 import customerSignMeIn from './api/customerSignMeIn';
 import customerSignOut from './api/customerSignOut';
-import getMyOrders from './api/getMyOrders';
+import getOrders from './api/getMyOrders';
 import applyCartCoupon from './api/applyCartCoupon';
 import removeCartCoupon from './api/removeCartCoupon';
 import customerChangeMyPassword from './api/customerChangeMyPassword';
@@ -61,6 +61,7 @@ export {
   getProduct,
   getProductlist,
   getCategory,
+  getOrders,
   createCart,
   updateCart,
   getCart,
@@ -76,6 +77,5 @@ export {
   customerSignOut,
   applyCartCoupon,
   removeCartCoupon,
-  getMyOrders,
   customerChangeMyPassword
 };

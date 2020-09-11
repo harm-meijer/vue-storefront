@@ -76,6 +76,7 @@ export const toUrl = (base, query) => {
     );
   return url.toString();
 };
+// @todo: get this from config
 const baseUrl =
   "https://api.commercetools.com/harm-sandbox-3";
 const asAttribute = (name, type, locale) => {
