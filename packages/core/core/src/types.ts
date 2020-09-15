@@ -78,6 +78,30 @@ export interface UseUserAddress<ADDRESS> {
   loading: ComputedProperty<boolean>;
 }
 
+export interface UseUserShipping<ADDRESS> {
+  addresses: ComputedProperty<ADDRESS[]>;
+  totalAddresses: ComputedProperty<number>;
+  addAddress: (address: ADDRESS) => Promise<void>;
+  deleteAddress: (address: ADDRESS) => Promise<void>;
+  updateAddress: (address: ADDRESS) => Promise<void>;
+  load: () => Promise<void>;
+  defaultAddress: ComputedProperty<ADDRESS>;
+  setDefault: (address: ADDRESS) => Promise<void>;
+  loading: ComputedProperty<boolean>;
+}
+
+export interface UseUserBilling<ADDRESS> {
+  addresses: ComputedProperty<ADDRESS[]>;
+  totalAddresses: ComputedProperty<number>;
+  addAddress: (address: ADDRESS) => Promise<void>;
+  deleteAddress: (address: ADDRESS) => Promise<void>;
+  updateAddress: (address: ADDRESS) => Promise<void>;
+  load: () => Promise<void>;
+  defaultAddress: ComputedProperty<ADDRESS>;
+  setDefault: (address: ADDRESS) => Promise<void>;
+  loading: ComputedProperty<boolean>;
+}
+
 export interface UseCategory
 <
   CATEGORY
@@ -152,12 +176,10 @@ export interface UseCheckout
   loading: ComputedProperty<boolean>;
 }
 
-export interface UseReviews<REVIEW, REVIEWS_SEARCH_PARAMS, REVIEW_ADD_PARAMS> {
+export interface UseReview<REVIEW, REVIEWS_SEARCH_PARAMS, REVIEW_ADD_PARAMS> {
   search: (params?: REVIEWS_SEARCH_PARAMS) => Promise<void>;
   addReview: (params: REVIEW_ADD_PARAMS) => Promise<void>;
-  reviews: ComputedProperty<REVIEW[]>;
-  totalReviews: ComputedProperty<number>;
-  averageRating: ComputedProperty<number>;
+  reviews: ComputedProperty<REVIEW>;
   loading: ComputedProperty<boolean>;
   error: ComputedProperty<string | null>;
 }
@@ -242,6 +264,19 @@ export interface UserOrderGetters<ORDER, ORDER_ITEM> {
   [getterName: string]: (element: any, options?: any) => unknown;
 }
 
+export interface ReviewGetters<REVIEW, REVIEW_ITEM> {
+  getItems: (review: REVIEW) => REVIEW_ITEM[];
+  getReviewId: (item: REVIEW_ITEM) => string;
+  getReviewAuthor: (item: REVIEW_ITEM) => string;
+  getReviewMessage: (item: REVIEW_ITEM) => string;
+  getReviewRating: (item: REVIEW_ITEM) => number;
+  getReviewDate: (item: REVIEW_ITEM) => string;
+  getTotalReviews: (review: REVIEW) => number;
+  getAverageRating: (review: REVIEW) => number;
+  getRatesCount: (review: REVIEW) => AgnosticRateCount[];
+  getReviewsPage: (review: REVIEW) => number;
+}
+
 export interface AgnosticMediaGalleryItem {
   small: string;
   normal: string;
@@ -309,6 +344,11 @@ export interface AgnosticSortByOption {
   label: string;
   value: string;
   [x: string]: unknown;
+}
+
+export interface AgnosticRateCount {
+  rate: number;
+  count: number;
 }
 
 // TODO - remove this interface
